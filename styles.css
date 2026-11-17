@@ -236,6 +236,17 @@ html[lang="kk"] .h1{font-size:clamp(38px,min(5.5vw,11vh),108px)}
 .card-tx p{font-size:15.5px;line-height:1.45}
 .card-tx .btn{margin-top:auto}
 .card-tx .h3{margin-bottom:0}
+/* 17.11.2026: каталог компактнее на широких экранах - чертежи по высоте окна, РГС карточкой в строку */
+@media (min-width:1101px){
+  .card-fig{padding:clamp(14px,1.4vw,26px);min-height:0}
+  .card-fig .dw{max-height:clamp(150px,21vh,230px)}
+  .card-rvs .card-fig .dw{max-height:clamp(340px,50vh,520px)}
+  .card-rgs{flex-direction:row}
+  .card-rgs .card-fig{flex:1.7 1 0;border-bottom:0;border-right:1px solid #C5D0D9}
+  .card-rgs .card-fig .dw{max-height:clamp(170px,24vh,260px)}
+  .card-rgs .card-tx{flex:1 1 0;justify-content:center}
+  .card-rgs .card-tx .btn{margin-top:8px}
+}
 @media (max-width:1100px){.cat{grid-template-columns:1fr 1fr}.card-rvs{grid-row:auto}.card-rgs{grid-column:auto}}
 @media (max-width:700px){.cat{grid-template-columns:minmax(0,1fr)}}
 
@@ -287,16 +298,30 @@ html[lang="kk"] .h1{font-size:clamp(38px,min(5.5vw,11vh),108px)}
 .sog[data-step="1"] .hl1 text{fill:var(--or2)}
 .sog[data-step="2"] .hl2 .t,.sog[data-step="2"] .hl2 .c,.sog[data-step="2"] .hl2 .u{stroke:var(--or2);stroke-width:2;opacity:1}
 .sog[data-step="3"] .hl3 .st,.sog[data-step="3"] .hl3 .sg{stroke:var(--or2);stroke-width:1.8}
+/* 17.11.2026: шаг читается однозначно - активный слой чертежа горит, остальные гаснут, слева шкала прогресса */
+.iso-dw .hl{transition:opacity .5s var(--e),filter .5s var(--e)}
+.sog .iso-dw .hl{opacity:.28}
+.sog[data-step="1"] .hl1,.sog[data-step="2"] .hl2,.sog[data-step="3"] .hl3{opacity:1;filter:drop-shadow(0 0 5px rgba(255,140,58,.55))}
+.sog[data-step="2"] .hl2 .fs{fill:rgba(255,140,58,.22)}
+.sog[data-step="3"] .hl3 .st{fill:rgba(255,140,58,.12)}
+.sog-list{position:relative}
+.sog-list::before,.sog-list::after{content:"";position:absolute;left:10px;top:0;width:2px;height:100%;background:rgba(124,156,194,.3)}
+.sog-list::after{background:var(--or);transform-origin:top;transform:scaleY(var(--sq,0))}
+.sog-list li{opacity:.42;transition:opacity var(--t2) var(--e),transform var(--t2) var(--e)}
+.sog-dot{z-index:1;background:#011E42}
+.sog[data-step="1"] li[data-s="1"],.sog[data-step="2"] li[data-s="2"],.sog[data-step="3"] li[data-s="3"]{transform:translateX(8px)}
 @media (max-width:900px){
   .sog{height:auto}.sog-pin{position:static;height:auto;display:block;padding:64px 0}
   .sog-in{grid-template-columns:minmax(0,1fr);padding-top:0}
-  .sog-list li{opacity:1}
+  .sog-list li{opacity:1;transform:none!important}
+  .sog-list::before,.sog-list::after{display:none}
+  .sog .iso-dw .hl{opacity:1;filter:none}
   .sog-fig{order:-1;max-width:420px}
   .sog .hl1 .d,.sog .hl2 .t,.sog .hl3 .st,.sog .hl3 .sg{stroke:var(--or2)!important}
 }
 
 /* ---------- комплектующие ---------- */
-.kompl-fig .dw{width:100%;height:auto}
+.kompl-fig .dw{display:block;width:100%;height:auto;max-height:clamp(220px,34vh,380px);margin-inline:auto}
 .kompl-dw .cl{fill:rgba(230,96,3,.08);stroke:var(--or);stroke-width:1.6;stroke-dasharray:7 5}
 .kompl-dw .cl2{fill:none;stroke:var(--or);stroke-width:1.2}
 .kompl-dw .cnm{font:700 22px var(--fd);letter-spacing:.04em;text-transform:uppercase;fill:var(--navy)}
@@ -304,9 +329,15 @@ html[lang="kk"] .h1{font-size:clamp(38px,min(5.5vw,11vh),108px)}
 .node{position:relative;background:#fff;border:1px solid #C5D0D9;border-top:2px solid var(--or);padding:clamp(16px,1.8vw,30px);display:flex;flex-direction:column;gap:14px;align-items:flex-start;transition:box-shadow var(--t2) var(--e),border-color var(--t2) var(--e),opacity .7s var(--e),transform .7s var(--e)}
 .node:hover{box-shadow:0 24px 50px -28px rgba(0,41,88,.45);border-color:var(--navy);border-top-color:var(--or)}
 .node-fig{width:100%;background:linear-gradient(180deg,#F7F9FB,#E9EEF2);padding:14px}
-.node-fig .dw{width:100%;height:auto;aspect-ratio:340/190}
+.node-fig .dw{display:block;width:100%;height:auto;aspect-ratio:340/190;max-height:clamp(120px,17vh,190px);margin-inline:auto}
 .node-dw .hx{fill:url(#pSec)}
 .node .h3{font-size:clamp(26px,2.4vw,40px)}
+@media (min-width:1400px){
+  .node{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:1fr auto auto 1fr;column-gap:clamp(14px,1.4vw,24px);row-gap:12px;align-items:start}
+  .node-fig{grid-row:1/5;align-self:stretch;display:grid;place-items:center}
+  .node .h3{grid-column:2;grid-row:2;font-size:clamp(24px,1.9vw,34px)}
+  .node .btn{grid-column:2;grid-row:3;white-space:nowrap}
+}
 .kompl-ig{margin-top:clamp(22px,2.6vw,40px)}
 /* на телефоне подпись выноски крупнее и прижата к концу полки, чтобы не уходить за край */
 @media (max-width:860px){.nodes{grid-template-columns:minmax(0,1fr)}.kompl-dw .cnm{font-size:32px;text-anchor:end;transform:translateX(100px)}}

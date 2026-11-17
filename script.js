@@ -149,9 +149,11 @@
       else if (q <= C) return K[1];
       else if (q < E) { i = 1; t = (q - C) / (E - C); }
       else return K[2];
-      t = ease(t);
-      var k0 = K[i], k1 = K[i + 1];
-      return { s: Math.exp(Math.log(k0.s) + (Math.log(k1.s) - Math.log(k0.s)) * t), cx: k0.cx + (k1.cx - k0.cx) * (i === 0 ? t : ease(t)) };
+      t = t * t * t * (t * (t * 6 - 15) + 10);
+      /* 17.11.2026: камера ведётся краями кадра, а не масштабом и центром отдельно - без «заноса» при смене масштаба */
+      var k0 = K[i], k1 = K[i + 1], w0 = vw / (k0.s * U), w1 = vw / (k1.s * U);
+      var l = (k0.cx - w0 / 2) + ((k1.cx - w1 / 2) - (k0.cx - w0 / 2)) * t, r = (k0.cx + w0 / 2) + ((k1.cx + w1 / 2) - (k0.cx + w0 / 2)) * t;
+      return { s: vw / ((r - l) * U), cx: (l + r) / 2 };
     }
     function fmt(v) {
       v = v < 100 ? Math.round(v) : v < 1000 ? Math.round(v / 10) * 10 : v < 10000 ? Math.round(v / 100) * 100 : Math.round(v / 500) * 500;
@@ -181,11 +183,17 @@
     measure();
     window.addEventListener('resize', function () { if (window.innerWidth !== lastW || !mob) { lastW = window.innerWidth; measure(); } });
     if (d.fonts && d.fonts.ready) d.fonts.ready.then(measure);
-    function prog() {
+    var lt = 0;
+    function prog(t) {
       if (mob) { p = 0; return; }
       var r = sec.getBoundingClientRect(), range = r.height - window.innerHeight;
       var np = range > 0 ? clamp(-r.top / range, 0, 1) : 0;
-      if (np !== p) { p = np; render(); }
+      /* 17.11.2026: собственная инерция камеры - догоняет прокрутку плавно, рывки колеса и тачпада гасятся */
+      var dt = lt ? Math.min(64, t - lt) : 16.7; lt = t;
+      if (np === p) return;
+      var k = reduce ? 1 : 1 - Math.pow(1 - 0.085, dt / 16.7);
+      p = Math.abs(np - p) < 0.0005 ? np : p + (np - p) * k;
+      render();
     }
     ticks.push(prog);
     $$('.scale-stop').forEach(function (b) {
@@ -253,6 +261,7 @@
       var r = sog.getBoundingClientRect(), range = r.height - window.innerHeight;
       var q = range > 0 ? clamp(-r.top / range, 0, 1) : 0;
       var s = q < 0.3 ? 1 : q < 0.64 ? 2 : 3;
+      sog.style.setProperty('--sq', clamp(q * 1.12, 0, 1).toFixed(3));
       if (sog.getAttribute('data-step') !== String(s)) sog.setAttribute('data-step', s);
     }
     window.addEventListener('scroll', upd, { passive: true }); upd();
