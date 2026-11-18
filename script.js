@@ -246,7 +246,7 @@
       var t0 = performance.now();
       (function step(t) {
         var k = clamp((t - t0) / 1600, 0, 1);
-        n.textContent = Math.round(45 * (1 - Math.pow(1 - k, 3)));
+        n.textContent = Math.round(20 * (1 - Math.pow(1 - k, 3)));
         if (k < 1) requestAnimationFrame(step);
       })(t0);
     }
@@ -309,6 +309,26 @@
     fit(); upd();
     window.addEventListener('resize', function () { fit(); last = ''; upd(); });
     window.addEventListener('scroll', upd, { passive: true });
+  })();
+
+  /* ---------- производство: петли играют, только пока карточка в кадре ---------- */
+  (function () {
+    var vs = $$('.pv video');
+    if (!vs.length || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    vs.forEach(function (v) {
+      v.addEventListener('playing', function () { v.parentNode.classList.add('is-live'); });
+    });
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) {
+          if (!v.src) v.src = v.getAttribute('data-src');
+          var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
+        } else if (v.src) v.pause();
+      });
+    }, { threshold: 0.45 });
+    vs.forEach(function (v) { io.observe(v); });
   })();
 
   /* ---------- форма ---------- */
