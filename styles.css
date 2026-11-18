@@ -366,6 +366,13 @@ html[lang="kk"] .h1{font-size:clamp(38px,min(5.5vw,11vh),108px)}
 .mk{position:absolute;left:50%;top:70%;width:14px;height:14px;margin:-7px 0 0 -7px;border:2px solid var(--or2);border-radius:50%;background:rgba(230,96,3,.25);opacity:0;transform:scale(.2);transition:opacity var(--t2) var(--e),transform var(--t2) var(--e)}
 .mk-h{width:20px;height:20px;margin:-10px 0 0 -10px;top:74%}
 .roll.marks .mk{opacity:1;transform:none}
+/* финал «Монтаж»: 3D-лист гаснет, проявляется плоская обечайка (задний шов и задние патрубки не просвечивают) */
+.roll-3d{transition:opacity .6s var(--e)}
+.roll.done .roll-3d{opacity:0}
+.roll-shellw{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);opacity:0;transition:opacity .6s var(--e)}
+.roll-shell{max-width:none;height:auto;--ln:#fff;--ln2:#C9D1D6}
+.roll-shell .mko .c{stroke:var(--or2)}.roll-shell .mko .fs{fill:rgba(230,96,3,.25);stroke:var(--or2)}
+.roll.done .roll-shellw{opacity:1}
 .roll-basew,.roll-overw{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);opacity:0;transition:opacity .6s var(--e)}
 .roll-over,.roll-base{max-width:none;height:auto}
 .roll-over{--ln:#fff;--ln2:#C9D1D6}
@@ -383,6 +390,8 @@ html[lang="kk"] .h1{font-size:clamp(38px,min(5.5vw,11vh),108px)}
 .roll.rolling .roll-ax,.roll.rolling .roll-stamp{opacity:0}
 .et-list li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(16px,2vw,34px);align-items:start;padding:clamp(22px,4.4vh,54px) 0;border-top:1px solid rgba(100,119,131,.35);min-height:30vh;opacity:.62;transition:opacity var(--t2) var(--e)}
 .et-list li:last-child{border-bottom:1px solid rgba(100,119,131,.35)}
+/* после шага 05 кадр держится в экране ~40vh прокрутки, чтобы готовый резервуар успели рассмотреть */
+@media (min-width:901px){.et-list li:last-child{min-height:max(34vh,calc(var(--hh) + min(78vh,720px) - 12vh))}}
 .et-n{font:800 clamp(64px,7vw,128px)/.82 var(--fd);color:transparent;-webkit-text-stroke:1.5px var(--steel);transition:color var(--t2) var(--e),-webkit-text-stroke-color var(--t2) var(--e);font-variant-numeric:tabular-nums}
 .et-list p{margin-top:8px;max-width:520px}
 .et-list .h3{font-size:clamp(26px,2.6vw,44px)}
