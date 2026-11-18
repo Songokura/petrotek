@@ -252,21 +252,33 @@
     }
   })();
 
-  /* ---------- согласование: три шага ---------- */
+  /* ---------- согласование: три шага по кругу (не от прокрутки, 18.11.2026) ---------- */
   (function () {
     var sog = $('#soglasovanie');
     if (!sog) return;
-    function upd() {
-      if (window.innerWidth <= 900) return;
-      var r = sog.getBoundingClientRect(), range = r.height - window.innerHeight;
-      var q = range > 0 ? clamp(-r.top / range, 0, 1) : 0;
-      var s = q < 0.3 ? 1 : q < 0.64 ? 2 : 3;
-      sog.style.setProperty('--sq', clamp(q * 1.12, 0, 1).toFixed(3));
-      if (sog.getAttribute('data-step') !== String(s)) sog.setAttribute('data-step', s);
+    var lis = $$('.sog-list li', sog), cur = 1, timer = null, seen = false, hold = false, DUR = 3200;
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function go(s) {
+      cur = s;
+      sog.setAttribute('data-step', s);
+      sog.style.setProperty('--sq', (s / lis.length).toFixed(3));
     }
-    window.addEventListener('scroll', upd, { passive: true }); upd();
-    $$('.sog-list li', sog).forEach(function (li) {
-      li.addEventListener('mouseenter', function () { if (window.innerWidth > 900) sog.setAttribute('data-step', li.getAttribute('data-s')); });
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function run() {
+      stop();
+      if (still || hold || !seen || document.hidden || window.innerWidth <= 900) return;
+      timer = setInterval(function () { go(cur % lis.length + 1); }, DUR);
+    }
+    go(1);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { seen = es[0].isIntersecting; run(); }, { threshold: 0.35 }).observe(sog);
+    } else { seen = true; run(); }
+    document.addEventListener('visibilitychange', run);
+    window.addEventListener('resize', run);
+    lis.forEach(function (li) {
+      function pick() { if (window.innerWidth > 900) { hold = true; stop(); go(+li.getAttribute('data-s')); } }
+      li.addEventListener('mouseenter', pick);
+      li.addEventListener('mouseleave', function () { hold = false; run(); });
     });
   })();
 
