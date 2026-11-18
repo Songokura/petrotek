@@ -266,7 +266,7 @@
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
     function run() {
       stop();
-      if (still || hold || !seen || document.hidden || window.innerWidth <= 900) return;
+      if (still || hold || !seen || document.hidden) return;
       timer = setInterval(function () { go(cur % lis.length + 1); }, DUR);
     }
     go(1);
@@ -274,11 +274,11 @@
       new IntersectionObserver(function (es) { seen = es[0].isIntersecting; run(); }, { threshold: 0.35 }).observe(sog);
     } else { seen = true; run(); }
     document.addEventListener('visibilitychange', run);
-    window.addEventListener('resize', run);
-    lis.forEach(function (li) {
-      function pick() { if (window.innerWidth > 900) { hold = true; stop(); go(+li.getAttribute('data-s')); } }
-      li.addEventListener('mouseenter', pick);
-      li.addEventListener('mouseleave', function () { hold = false; run(); });
+        lis.forEach(function (li) {
+      // мышь: наведение держит пункт; палец: тап выбирает пункт, цикл идёт дальше с него
+      li.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'mouse') return; hold = true; stop(); go(+li.getAttribute('data-s')); });
+      li.addEventListener('pointerleave', function (e) { if (e.pointerType !== 'mouse') return; hold = false; run(); });
+      li.addEventListener('click', function () { if (!hold) { go(+li.getAttribute('data-s')); run(); } });
     });
   })();
 

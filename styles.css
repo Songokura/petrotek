@@ -313,11 +313,13 @@ html[lang="kk"] .h1{font-size:clamp(38px,min(5.5vw,11vh),108px)}
 @media (max-width:900px){
   .sog{height:auto}.sog-pin{position:static;height:auto;min-height:0;display:block;padding:64px 0}
   .sog-in{grid-template-columns:minmax(0,1fr);padding-top:0}
-  .sog-list li{opacity:1;transform:none!important}
-  .sog-list::before,.sog-list::after{display:none}
-  .sog .iso-dw .hl{opacity:1;filter:none}
-  .sog-fig{order:-1;max-width:420px}
-  .sog .hl1 .d,.sog .hl2 .t,.sog .hl3 .st,.sog .hl3 .sg{stroke:var(--or2)!important}
+  /* цикл шагов и на телефоне (18.11.2026): без сдвига пункта и без свечения слоя - тени на таче тормозят */
+  .sog-list li{transform:none!important;opacity:.5}
+  .sog .iso-dw .hl1,.sog .iso-dw .hl2,.sog .iso-dw .hl3{filter:none!important}
+  /* чертёж между заголовком и списком: подсвеченный слой и пункт видны на одном экране */
+  .sog-in{display:flex;flex-direction:column}.sog-tx{display:contents}
+  .sog .head{order:1}.sog-fig{order:2;width:100%;max-width:420px;margin:0 auto clamp(14px,2vh,22px)}.sog-list{order:3}.sog-tx>.btn{order:4;align-self:flex-start}
+  .sog-fig .dw{max-height:36svh}
 }
 
 /* ---------- комплектующие ---------- */
